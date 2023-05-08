@@ -16,32 +16,7 @@ function init() {
         speechSynthesis.onvoiceschanged = populateVoiceList
     }
 
-    // speaking on click
-    button.addEventListener("click", () => {
-        
-        let utterance = new SpeechSynthesisUtterance(inputText.value);
-
-        const selectedVoice =
-        
-            // set voice to chosen voice name
-            document.getElementById("voice-select").selectedOptions[0].getAttribute("data-name");
-            
-            for (let i = 0; i < voices.length; i++) {
-                if (voices[i].name === selectedVoice) {
-                    utterance.voice = voices[i];
-                }
-            }
-        synth.speak(utterance);
-    });
-
-    setInterval(function() {
-        if (synth.speaking) {
-            document.querySelector("img").src = "assets/images/smiling-open.png";
-        }
-        else {
-            document.querySelector("img").src = "assets/images/smiling.png";
-        }
-    }, 5);
+    speak() 
 }
 
 // populating
@@ -66,3 +41,28 @@ function populateVoiceList(){
     }
 }
 
+function speak(){
+     // speaking on click
+     button.addEventListener("click", () => {
+        
+        let utterance = new SpeechSynthesisUtterance(inputText.value);
+
+        const selectedVoice =
+        
+            // set voice to chosen voice name
+            document.getElementById("voice-select").selectedOptions[0].getAttribute("data-name");
+            
+            for (let i = 0; i < voices.length; i++) {
+                if (voices[i].name === selectedVoice) {
+                    utterance.voice = voices[i];
+                }
+            }
+        synth.speak(utterance);
+    });
+
+    img.setAttribute('src', 'assets/images/smiling-open.png')
+
+    utterance.addEventListener('end', () => {
+      img.setAttribute('src', 'assets/images/smiling.png')
+    });
+}
