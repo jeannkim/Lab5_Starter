@@ -33,13 +33,6 @@ function init() {
             }
         }
         synth.speak(utterance);
-
-         // at button click, motuh should be open
-        img.setAttribute('src', 'assets/images/smiling-open.png')
-
-        utterance.addEventListener('end', () => {
-            img.setAttribute('src', 'assets/images/smiling.png')
-        });
     });
 
     const interval = setInterval(function() {
@@ -49,7 +42,7 @@ function init() {
         else {
             document.querySelector("img").src = "assets/images/smiling.png";
         }
-    }, 1);
+    }, 5);
 }
 
 // populating
