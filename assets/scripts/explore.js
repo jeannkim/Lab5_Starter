@@ -16,6 +16,29 @@ function init() {
   ) {
     speechSynthesis.onvoiceschanged = populateVoiceList
   }
+
+  button.addEventListener("click", () => {
+    let utterance = new SpeechSynthesisUtterance(inputText.value);
+
+    const selectedVoice =
+      voiceSelect.selectedOptions[0].getAttribute("data-name");
+    
+      for (let i = 0; i < voices.length; i++) {
+      if (voices[i].name === selectedVoice) {
+        utterance.voice = voices[i];
+      }
+    }
+    synth.speak(utterance);
+  });
+
+  setInterval(function() {
+    if (synth.speaking) {
+      document.querySelector("img").src = "assets/images/smiling-open.png";
+    }
+    else {
+      document.querySelector("img").src = "assets/images/smiling.png";
+    }
+  }, 5);
 }
 
 function populateVoiceList(){
