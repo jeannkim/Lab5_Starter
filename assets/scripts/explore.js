@@ -1,40 +1,41 @@
 // explore.js
-window.addEventListener("DOMContentLoaded", init);
+
+window.addEventListener('DOMContentLoaded', init);
 
 function init() {
-  const voiceSelect = document.querySelector("#voice-select");
-  const speakButton = document.querySelector("button");
-  const textInput = document.querySelector("textarea");
-  const img = document.querySelector("img");
+  const synth = window.speechSynthesis
+  const voices = speechSynthesis.getVoices()
+  const voiceSelect = document.getElementById("voice-select")
+  const inputText = document.getElementById("text-to-speak")
+  const button = document.querySelector("button")
 
-  let voices = [];
-
-  speechSynthesis.onvoiceschanged = () => {
-    voices = speechSynthesis.getVoices();
-    voices.forEach((voice) => {
-      const option = document.createElement("option");
-      option.textContent = `${voice.name} (${voice.lang})`;
-      option.setAttribute("data-lang", voice.lang);
-      option.setAttribute("data-name", voice.name);
-      voiceSelect.appendChild(option);
-    });
-  };
-
-  speakButton.addEventListener('click', () => {
-    let utterance = new SpeechSynthesisUtterance(textInput.value);
-    
-    voices.forEach(voice => {
-      if (voice.name === voiceSelect.selectedOptions[0].getAttribute('data-name')) {
-        utterance.voice = voice;
-      }
-    })
-    speechSynthesis.speak(utterance);
-
-    // change img
-    img.setAttribute('src', 'assets/images/smiling.png')
-
-    utterance.addEventListener('start', () => {
-      img.setAttribute('src', 'assets/images/smiling-open.png')
-    });
-  })
+  populateVoiceList()
+  if(
+    typeof speechSynthesis !== "undefined" &&
+    speechSynthesis.onvoiceschanged !== undefined
+  ) {
+    speechSynthesis.onvoiceschanged = populateVoiceList
+  }
 }
+
+function populateVoiceList(){
+  if(typeof speechSynthesis === "undefined"){
+    return;
+  }
+
+  const voices = speechSynthesis.getVoices()
+
+  for(let i = 0; i < voices.length; i++){
+    const option = document.createElement("option")
+    option.textContent = `${voices[i].name} (${voices[i].lang})`
+
+    if(voices[i].default){
+      option.textContent += " - DEFAULT"
+    }
+
+    option.setAttribute("data-lang", voices[i].lang)
+    option.setAttribute("data-name", voices[i].name)
+    document.querySelector("select").appendChild(option)
+  }
+}
+
