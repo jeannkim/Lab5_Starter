@@ -12,7 +12,6 @@ function init() {
 
     let utterance = new SpeechSynthesisUtterance(inputText.value);
     
-    // when utterance is speaking/done, change icon.
     utterance.addEventListener("start", () => {
         face.src = "assets/images/smiling-open.png";
     });
