@@ -4,6 +4,12 @@ window.addEventListener('DOMContentLoaded', init);
 
 function init() {
 
+    // Get references to the HTML elements
+    const textToSpeak = document.getElementById('text-to-speak');
+    const voiceSelect = document.getElementById('voice-select');
+    const speakButton = document.querySelector('button');
+    const faceImage = document.querySelector('img');
+
     function populateVoiceList() {
         if (typeof speechSynthesis === "undefined") {
           return;
