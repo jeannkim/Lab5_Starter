@@ -8,7 +8,20 @@ function init() {
     const voiceSelect = document.getElementById("voice-select")
     const inputText = document.getElementById("text-to-speak")
     const button = document.querySelector("button")
+    const face = document.querySelector("img");
 
+    let utterance = new SpeechSynthesisUtterance(inputText.value);
+    
+    // when utterance is speaking/done, change icon.
+    utterance.addEventListener("start", () => {
+        face.src = "assets/images/smiling-open.png";
+    });
+
+    utterance.addEventListener("end", () => {
+        face.src = "assets/images/smiling.png";
+    });
+
+        
     populateVoiceList()
     if(
         typeof speechSynthesis !== "undefined" &&
@@ -19,9 +32,6 @@ function init() {
 
     // speaking on click
     button.addEventListener("click", () => {
-        
-        let utterance = new SpeechSynthesisUtterance(inputText.value);
-
         const selectedVoice =
         
             // set voice to chosen voice name
@@ -35,14 +45,7 @@ function init() {
         synth.speak(utterance);
     });
 
-    const interval = setInterval(function() {
-        if (synth.speaking) {
-            document.querySelector("img").src = "assets/images/smiling-open.png";
-        }
-        else {
-            document.querySelector("img").src = "assets/images/smiling.png";
-        }
-    }, 5);
+
 }
 
 // populating
