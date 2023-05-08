@@ -1,51 +1,41 @@
-const synth = window.speechSynthesis;
+// Wait for the DOM to load before running the script
+document.addEventListener('DOMContentLoaded', () => {
 
-const inputForm = document.querySelector("form");
-const inputTxt = document.querySelector(".txt");
-const voiceSelect = document.querySelector("select");
-const pitch = document.querySelector("#pitch");
-const pitchValue = document.querySelector(".pitch-value");
-const rate = document.querySelector("#rate");
-const rateValue = document.querySelector(".rate-value");
+  // Get references to the HTML elements
+  const textToSpeak = document.getElementById('text-to-speak');
+  const voiceSelect = document.getElementById('voice-select');
+  const speakButton = document.querySelector('button');
+  const faceImage = document.querySelector('img');
 
-let voices = [];
-
-function populateVoiceList() {
-  voices = synth.getVoices();
-
-  for (let i = 0; i < voices.length; i++) {
-    const option = document.getElementsByName("voice");
-    option.textContent = `${voices[i].name} (${voices[i].lang})`;
-
-    if (voices[i].default) {
-      option.textContent += " — DEFAULT";
-    }
-
-    option.setAttribute("data-lang", voices[i].lang);
-    option.setAttribute("data-name", voices[i].name);
-    voiceSelect.appendChild(option);
-  }
-}
-
-populateVoiceList();
-if (speechSynthesis.onvoiceschanged !== undefined) {
-  speechSynthesis.onvoiceschanged = populateVoiceList;
-}
-
-inputForm.onsubmit = (event) => {
-  event.preventDefault();
-
-  const utterThis = new SpeechSynthesisUtterance(inputTxt.value);
-  const selectedOption =
-    voiceSelect.selectedOptions[0].getAttribute("data-name");
-  for (let i = 0; i < voices.length; i++) {
-    if (voices[i].name === selectedOption) {
-      utterThis.voice = voices[i];
+  // Populate the voice select dropdown with available voices
+  function populateVoiceList() {
+    const voices = speechSynthesis.getVoices();
+    for (let i = 0; i < voices.length; i++) {
+      const option = document.createElement('option');
+      option.textContent = voices[i].name + ' (' + voices[i].lang + ')';
+      option.value = i;
+      voiceSelect.appendChild(option);
     }
   }
-  utterThis.pitch = pitch.value;
-  utterThis.rate = rate.value;
-  synth.speak(utterThis);
+  // Wait for the voices to load before populating the dropdown
+  speechSynthesis.onvoiceschanged = () => {
+    populateVoiceList();
+  };
 
-  inputTxt.blur();
-};
+  // When the speak button is clicked, speak the text using the selected voice
+  speakButton.addEventListener('click', () => {
+    const selectedVoiceIndex = voiceSelect.value;
+    const selectedVoice = speechSynthesis.getVoices()[selectedVoiceIndex];
+    if (selectedVoice && textToSpeak.value !== '') {
+      const utterance = new SpeechSynthesisUtterance(textToSpeak.value);
+      utterance.voice = selectedVoice;
+      utterance.onstart = () => {
+        faceImage.src = 'assets/images/open-mouth.png';
+      };
+      utterance.onend = () => {
+        faceImage.src = 'assets/images/smiling.png';
+      };
+      speechSynthesis.speak(utterance);
+    }
+  });
+});
